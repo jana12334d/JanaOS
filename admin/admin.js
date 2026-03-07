@@ -25,7 +25,14 @@ const initialState = {
         frameworks: []
     },
     projects: [],
-    gallery: []
+    gallery: [],
+    // Container for other resume sections to ensure they are preserved
+    resume_extras: {
+        education: [],
+        experience: [],
+        certifications: [],
+        achievements: []
+    }
 };
 
 // Global State
@@ -132,6 +139,14 @@ async function fetchCurrentData() {
                     frameworks: resume.skills["Frameworks"] || []
                 };
             }
+
+            // Preserve other sections
+            appState.resume_extras = {
+                education: resume.education || [],
+                experience: resume.experience || [],
+                certifications: resume.certifications || [],
+                achievements: resume.achievements || []
+            };
 
             appState.projects = projects || [];
             appState.gallery = gallery || [];
@@ -459,44 +474,16 @@ function exportJSON() {
             linkedin: appState.links.linkedin,
             email: appState.links.email
         },
-        education: [
-            {
-                degree: "B.S. Computer Science",
-                concentration: "Artificial Intelligence & Cybersecurity",
-                school: appState.profile.university || "Effat University",
-                year: "2023 - Present",
-                gpa: "3.9/4.0"
-            }
-        ],
+        education: appState.resume_extras.education,
         skills: {
             "Programming Languages": appState.skills.languages,
             "AI/ML Tools": appState.skills.ai_tools,
             "Security Tools": appState.skills.security_tools,
             "Frameworks": appState.skills.frameworks
         },
-        experience: [
-             {
-                role: "Security Intern",
-                company: "CyberDefense Corp",
-                duration: "Summer 2024",
-                description: "Assisted in vulnerability assessments of web applications. Automating threat intelligence feeds using Python scripts."
-            },
-            {
-                role: "Undergraduate Researcher",
-                company: "AI Safety Lab",
-                duration: "Jan 2024 - Present",
-                description: "Researching adversarial attacks on large language models. Co-authored a paper on prompt injection mitigation strategies."
-            }
-        ],
-        certifications: [
-            "CompTIA Security+",
-            "AWS Certified Cloud Practitioner",
-            "Google Cybersecurity Professional Certificate"
-        ],
-        achievements: [
-            "Dean's List (All Semesters)",
-            "1st Place, Effat University Hackathon 2024"
-        ]
+        experience: appState.resume_extras.experience,
+        certifications: appState.resume_extras.certifications,
+        achievements: appState.resume_extras.achievements
     };
     
     // We download resume.json slightly delayed to prevent browser blocking multiple downloads
