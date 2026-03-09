@@ -109,52 +109,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchCurrentData() {
     try {
-        // Fetch all data sources in parallel
-        const [projectsRes, resumeRes, galleryRes] = await Promise.all([
-            fetch('../data/projects.json'),
-            fetch('../data/resume.json'),
-            fetch('../data/gallery.json')
-        ]);
+        const response = await fetch('../data/portfolio-data.json');
 
-        if (projectsRes.ok && resumeRes.ok && galleryRes.ok) {
-            const projects = await projectsRes.json();
-            const resume = await resumeRes.json();
-            const gallery = await galleryRes.json();
+        if (response.ok) {
+            const data = await response.json();
 
             // Map fetched data to appState structure
-            appState.profile = resume.profile || initialState.profile;
+            appState.profile = data.profile || initialState.profile;
             appState.links = {
-                github: resume.profile.github || "",
-                linkedin: resume.profile.linkedin || "",
-                email: resume.profile.email || "",
-                resume: "assets/resume.pdf" // Default or extracted if available
+                github: data.links?.github || "",
+                linkedin: data.links?.linkedin || "",
+                email: data.links?.email || "",
+                resume: data.links?.resume || "assets/resume.pdf"
             };
             
-            // Map skills from resume structure to admin structure
-            if (resume.skills) {
+            // Map skills
+            if (data.skills) {
                 appState.skills = {
-                    languages: resume.skills["Programming Languages"] || [],
-                    ai_tools: resume.skills["AI/ML Tools"] || [],
-                    security_tools: resume.skills["Security Tools"] || [],
-                    frameworks: resume.skills["Frameworks"] || []
+                    languages: data.skills.languages || [],
+                    ai_tools: data.skills.ai_tools || [],
+                    security_tools: data.skills.security_tools || [],
+                    frameworks: data.skills.frameworks || []
                 };
             }
 
             // Preserve other sections
             appState.resume_extras = {
-                education: resume.education || [],
-                experience: resume.experience || [],
-                certifications: resume.certifications || [],
-                achievements: resume.achievements || []
+                education: data.education || [],
+                experience: data.experience || [],
+                certifications: data.certifications || [],
+                achievements: data.achievements || []
             };
 
-            appState.projects = projects || [];
-            appState.gallery = gallery || [];
+            appState.projects = data.projects || [];
+            appState.gallery = data.gallery || [];
 
             populateUI();
             showToast('Loaded current portfolio data');
         } else {
-            throw new Error('Failed to load some data files');
+            throw new Error('Failed to load portfolio-data.json');
         }
     } catch (error) {
         console.error('Error fetching current data:', error);
@@ -460,38 +453,21 @@ window.deleteGalleryItemGlobal = deleteGalleryItem;
 // --- Import / Export ---
 
 function exportJSON() {
-    // 1. Export projects.json
-    downloadFile("projects.json", JSON.stringify(appState.projects, null, 2));
-
-    // 2. Export gallery.json
-    downloadFile("gallery.json", JSON.stringify(appState.gallery, null, 2));
-
-    // 3. Export resume.json (Reconstruct structure)
-    const resumeData = {
-        profile: {
-            ...appState.profile,
-            github: appState.links.github,
-            linkedin: appState.links.linkedin,
-            email: appState.links.email
-        },
+    // Reconstruct the full portfolio-data.json structure
+    const exportData = {
+        profile: appState.profile,
+        links: appState.links,
         education: appState.resume_extras.education,
-        skills: {
-            "Programming Languages": appState.skills.languages,
-            "AI/ML Tools": appState.skills.ai_tools,
-            "Security Tools": appState.skills.security_tools,
-            "Frameworks": appState.skills.frameworks
-        },
+        skills: appState.skills,
         experience: appState.resume_extras.experience,
         certifications: appState.resume_extras.certifications,
-        achievements: appState.resume_extras.achievements
+        achievements: appState.resume_extras.achievements,
+        projects: appState.projects,
+        gallery: appState.gallery
     };
     
-    // We download resume.json slightly delayed to prevent browser blocking multiple downloads
-    setTimeout(() => {
-        downloadFile("resume.json", JSON.stringify(resumeData, null, 2));
-    }, 500);
-
-    showToast('Exported 3 files. Place them in /data folder.');
+    downloadFile("portfolio-data.json", JSON.stringify(exportData, null, 2));
+    showToast('Exported portfolio-data.json. Place it in /data folder.');
 }
 
 function downloadFile(filename, content) {
