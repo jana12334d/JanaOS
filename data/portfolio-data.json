@@ -4,7 +4,10 @@
     "title": "AI & Cybersecurity Student",
     "university": "Effat University",
     "bio": "Designing intelligent systems. Securing what matters.",
-    "about": "I am a Computer Science student at Effat University, where I bridge the gap between building intelligent agents and securing the infrastructure they run on.\n\nMy academic journey focuses on Artificial Intelligence and Cybersecurity. I am deeply curious about how systems \"think\" through algorithms and how they can be broken—and subsequently protected—from malicious actors.\n\nBeyond my coursework, I enjoy exploring emerging technologies, building small software projects, and learning about new developments in AI, machine learning, and cybersecurity. I am passionate about creating intelligent systems that are not only powerful but also secure and reliable."
+    "tagline": "I’m passionate about designing systems that can learn, adapt, and solve real-world problems — while understanding the vulnerabilities that come with them.",
+    "about": "I am a Computer Science student at Effat University, where I bridge the gap between building intelligent agents and securing the infrastructure they run on.\n\nMy academic journey focuses on Artificial Intelligence and Cybersecurity. I am deeply curious about how systems \"think\" through algorithms and how they can be broken—and subsequently protected—from malicious actors.\n\nBeyond my coursework, I enjoy exploring emerging technologies, building small software projects, and learning about new developments in AI, machine learning, and cybersecurity. I am passionate about creating intelligent systems that are not only powerful but also secure and reliable.",
+    "projects_desc": "A collection of my work in AI, Security, and Systems.",
+    "contact_text": "I am currently open to internships and research opportunities in AI Safety and Network Security."
   },
   "links": {
     "github": "https://github.com/jana12334d",

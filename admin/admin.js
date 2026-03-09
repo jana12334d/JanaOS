@@ -10,7 +10,10 @@ const initialState = {
         title: "",
         university: "",
         bio: "",
-        about: ""
+        tagline: "",
+        about: "",
+        projects_desc: "",
+        contact_text: ""
     },
     links: {
         github: "",
@@ -50,7 +53,10 @@ const els = {
     pTitle: document.getElementById('p-title'),
     pUni: document.getElementById('p-university'),
     pBio: document.getElementById('p-bio'),
+    pTagline: document.getElementById('p-tagline'),
     pAbout: document.getElementById('p-about'),
+    pProjectsDesc: document.getElementById('p-projects-desc'),
+    pContactText: document.getElementById('p-contact-text'),
     
     // Link Inputs
     lGithub: document.getElementById('l-github'),
@@ -160,7 +166,7 @@ async function fetchCurrentData() {
 function setupEventListeners() {
     // Profile & Links Input Listeners (Auto-save to state)
     const inputs = [
-        els.pName, els.pTitle, els.pUni, els.pBio, els.pAbout,
+        els.pName, els.pTitle, els.pUni, els.pBio, els.pTagline, els.pAbout, els.pProjectsDesc, els.pContactText,
         els.lGithub, els.lLinkedin, els.lEmail, els.lResume
     ];
     
@@ -224,7 +230,10 @@ function updateStateFromProfile() {
     appState.profile.title = els.pTitle.value;
     appState.profile.university = els.pUni.value;
     appState.profile.bio = els.pBio.value;
+    appState.profile.tagline = els.pTagline.value;
     appState.profile.about = els.pAbout.value;
+    appState.profile.projects_desc = els.pProjectsDesc.value;
+    appState.profile.contact_text = els.pContactText.value;
     
     appState.links.github = els.lGithub.value;
     appState.links.linkedin = els.lLinkedin.value;
@@ -246,7 +255,10 @@ function populateUI() {
     els.pTitle.value = appState.profile.title || "";
     els.pUni.value = appState.profile.university || "";
     els.pBio.value = appState.profile.bio || "";
+    els.pTagline.value = appState.profile.tagline || "";
     els.pAbout.value = appState.profile.about || "";
+    els.pProjectsDesc.value = appState.profile.projects_desc || "";
+    els.pContactText.value = appState.profile.contact_text || "";
     
     // Links
     els.lGithub.value = appState.links.github || "";

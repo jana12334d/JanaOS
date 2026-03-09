@@ -2,6 +2,7 @@ import { initBootSequence } from './modules/boot.js';
 import { loadProjects } from './modules/projects.js';
 import { loadResume } from './modules/resume.js';
 import { loadGallery } from './modules/gallery.js';
+import { loadProfile } from './modules/profile.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Boot Sequence
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Load Data
+        loadProfile();
         loadProjects();
         loadResume();
         loadGallery();

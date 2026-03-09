@@ -60,13 +60,30 @@ function renderProjects(projects, container) {
 }
 
 function setupFilters(projects, container) {
+    const filterContainer = document.getElementById('projects-filter-container');
+    if (!filterContainer) return;
+
+    // Extract unique categories
+    const categories = ['All', ...new Set(projects.map(p => p.category))];
+
+    // Generate buttons
+    filterContainer.innerHTML = categories.map((cat, index) => {
+        const isAll = cat === 'All';
+        const filterValue = isAll ? 'all' : cat.toLowerCase();
+        const activeClasses = isAll ? 'bg-accent text-white' : 'text-slate-400 hover:text-white';
+        
+        return `<button class="filter-btn px-4 py-1.5 rounded text-sm font-medium transition-all ${activeClasses}" data-filter="${filterValue}">${cat}</button>`;
+    }).join('');
+
     const filterBtns = document.querySelectorAll('.filter-btn');
     
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             // Update active state
-            filterBtns.forEach(b => b.classList.remove('bg-accent', 'text-white'));
-            filterBtns.forEach(b => b.classList.add('text-slate-400', 'hover:text-white'));
+            filterBtns.forEach(b => {
+                b.classList.remove('bg-accent', 'text-white');
+                b.classList.add('text-slate-400', 'hover:text-white');
+            });
             
             btn.classList.remove('text-slate-400', 'hover:text-white');
             btn.classList.add('bg-accent', 'text-white');
