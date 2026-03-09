@@ -176,6 +176,28 @@ function setupEventListeners() {
     // Import / Export
     els.exportBtn.addEventListener('click', exportJSON);
     els.importFile.addEventListener('change', importJSON);
+
+    // Image Upload Listeners
+    const handleImageUpload = (fileInputId, textInput) => {
+        const fileInput = document.getElementById(fileInputId);
+        if (fileInput && textInput) {
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    textInput.value = event.target.result;
+                    // Trigger input event to auto-save if needed
+                    textInput.dispatchEvent(new Event('input'));
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    };
+
+    handleImageUpload('p-about-image-upload', els.pAboutImage);
+    handleImageUpload('gal-src-upload', els.galSrc);
 }
 
 function setupTabs() {
