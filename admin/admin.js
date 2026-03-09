@@ -55,6 +55,7 @@ const els = {
     pBio: document.getElementById('p-bio'),
     pTagline: document.getElementById('p-tagline'),
     pAbout: document.getElementById('p-about'),
+    pAboutImage: document.getElementById('p-about-image'),
     pProjectsDesc: document.getElementById('p-projects-desc'),
     pContactText: document.getElementById('p-contact-text'),
     
@@ -97,20 +98,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     setupSkillInputs();
     
-    // Try to load from local storage first (draft), otherwise fetch live data
-    const saved = localStorage.getItem('janaos_admin_draft');
-    if (saved) {
-        try {
-            appState = JSON.parse(saved);
-            populateUI();
-            showToast('Draft loaded from local storage');
-        } catch (e) {
-            console.error('Failed to load draft');
-            fetchCurrentData();
-        }
-    } else {
-        fetchCurrentData();
-    }
+    // Clear any old draft to ensure we always load fresh from JSON
+    localStorage.removeItem('janaos_admin_draft');
+    
+    // Always fetch live data from JSON to ensure admin panel is in sync with portfolio
+    fetchCurrentData();
 });
 
 async function fetchCurrentData() {
@@ -166,7 +158,7 @@ async function fetchCurrentData() {
 function setupEventListeners() {
     // Profile & Links Input Listeners (Auto-save to state)
     const inputs = [
-        els.pName, els.pTitle, els.pUni, els.pBio, els.pTagline, els.pAbout, els.pProjectsDesc, els.pContactText,
+        els.pName, els.pTitle, els.pUni, els.pBio, els.pTagline, els.pAbout, els.pAboutImage, els.pProjectsDesc, els.pContactText,
         els.lGithub, els.lLinkedin, els.lEmail, els.lResume
     ];
     
@@ -232,6 +224,7 @@ function updateStateFromProfile() {
     appState.profile.bio = els.pBio.value;
     appState.profile.tagline = els.pTagline.value;
     appState.profile.about = els.pAbout.value;
+    appState.profile.about_image = els.pAboutImage.value;
     appState.profile.projects_desc = els.pProjectsDesc.value;
     appState.profile.contact_text = els.pContactText.value;
     
@@ -244,7 +237,7 @@ function updateStateFromProfile() {
 }
 
 function persist() {
-    localStorage.setItem('janaos_admin_draft', JSON.stringify(appState));
+    // We no longer save to localStorage to ensure the admin panel always reads from the JSON file
 }
 
 // --- UI Populating ---
@@ -257,6 +250,7 @@ function populateUI() {
     els.pBio.value = appState.profile.bio || "";
     els.pTagline.value = appState.profile.tagline || "";
     els.pAbout.value = appState.profile.about || "";
+    els.pAboutImage.value = appState.profile.about_image || "";
     els.pProjectsDesc.value = appState.profile.projects_desc || "";
     els.pContactText.value = appState.profile.contact_text || "";
     
@@ -504,7 +498,33 @@ function importJSON(e) {
             const data = JSON.parse(e.target.result);
             // Basic validation
             if (data.profile && data.projects) {
-                appState = data;
+                appState.profile = data.profile || initialState.profile;
+                appState.links = {
+                    github: data.links?.github || "",
+                    linkedin: data.links?.linkedin || "",
+                    email: data.links?.email || "",
+                    resume: data.links?.resume || "assets/resume.pdf"
+                };
+                
+                if (data.skills) {
+                    appState.skills = {
+                        languages: data.skills.languages || [],
+                        ai_tools: data.skills.ai_tools || [],
+                        security_tools: data.skills.security_tools || [],
+                        frameworks: data.skills.frameworks || []
+                    };
+                }
+
+                appState.resume_extras = {
+                    education: data.education || [],
+                    experience: data.experience || [],
+                    certifications: data.certifications || [],
+                    achievements: data.achievements || []
+                };
+
+                appState.projects = data.projects || [];
+                appState.gallery = data.gallery || [];
+                
                 populateUI();
                 persist();
                 showToast('Data imported successfully');

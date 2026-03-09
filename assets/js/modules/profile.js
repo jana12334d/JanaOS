@@ -66,6 +66,11 @@ export async function loadProfile() {
             aboutText.innerHTML = paragraphs;
         }
 
+        const aboutImage = document.getElementById('about-image');
+        if (aboutImage && profile.about_image) {
+            aboutImage.src = profile.about_image;
+        }
+
         const aboutCode = document.getElementById('about-code');
         if (aboutCode) {
             const currentSchool = education.length > 0 ? education[0].school : (profile.university || 'University');
